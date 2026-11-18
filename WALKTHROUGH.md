@@ -45,6 +45,26 @@ The helper uses connection-local test triggers. It restores the connection hook,
 
 These triggers reach ordinary row writes in the two observed redirect paths. They do not reach disk failures, failed commits, process crashes, network loss or other processes. Record those limits in your release note. You do not need to design further failure injection.
 
+## Send repeated or malformed headers
+
+Use `LocalService.request` for ordinary JSON requests. It creates the body and length header for you. To test repeated client headers or an invalid or missing `Content-Length`, use `LocalService.raw_request` instead.
+
+Read the corresponding contract rule and write your expected reply before running:
+
+```text
+python3 raw_request_examples.py
+```
+
+The examples print the actual replies and saved rows. They run with the unchanged starter because these request checks happen before a storage method is called. Compare the output with your own expectations.
+
+`raw_request(method, path, headers, body)` takes a list of header pairs and a bytes body. A list keeps duplicate names, so two `("X-Client-Id", value)` pairs send two headers. For a missing length, leave `Content-Length` out. For an invalid length, include the text you want to test. The helper adds the host header but does not create length or content-type headers.
+
+For ordinary JSON bytes, encode text with `.encode("utf-8")` and use `str(len(body))` as the length. For deliberately invalid JSON, pass the bytes you want to test. The example file shows both omitted and malformed headers. Copy its request pattern, then add assertions for your chosen cases using `status`, `headers` and `body` from the reply. Compare saved rows too when the rule requires no change.
+
+Do not test a shorter body than a valid positive length promises. The server would wait for the missing bytes. The above-limit example can omit its body because the adapter rejects that length before reading. The helper uses one connection per call and closes it after reading the reply. The surrounding LocalService and temporary folder still own shutdown and database cleanup.
+
+These examples exercise the contract's local request validation. They do not model damaged network connections, all possible wire formats or every HTTP parser behaviour. You do not need to build more request plumbing.
+
 ## Build your own evidence
 
 These examples show how to use the helpers. Write your own expected results for input rules, duplicate codes, absent codes, different clients and other boundary cases in `CONTRACT.md`. Compare the statistics proposal with your version too. Choose checks that could fail even if the service still appears to open a link correctly.

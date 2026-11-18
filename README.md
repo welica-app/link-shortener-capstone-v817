@@ -50,7 +50,7 @@ This check creates a link and reads its saved destination and initial count. It 
 ## Continue one stage at a time
 
 1. Read [Connect resolve next](STORAGE_GUIDE.md#connect-resolve-next). Complete that method. Then trace the three calls in `server.py` and run `python3 -m unittest smoke_test -v`.
-2. When choosing your own tests, read [the request rules](CONTRACT.md#routes) and [the client and limit rules](CONTRACT.md#client-and-request-limit). Use those rules to write expected results.
+2. When choosing your own tests, read [the request rules](CONTRACT.md#routes) and [the client and limit rules](CONTRACT.md#client-and-request-limit). Use those rules to write expected results. For repeated headers or invalid and missing lengths, use [the raw request examples](WALKTHROUGH.md#send-repeated-or-malformed-headers).
 3. Before the overlap and failure checks, read [the storage protection](STORAGE_GUIDE.md#before-the-overlap-and-failure-checks). Then follow [the checking walkthrough](WALKTHROUGH.md). Read the contract's failure-helper section alongside that example.
 4. Compare the proposed statistics change in `review_candidate.py` with your completed version. Keep both versions' results in your release note.
 5. Write the release note using [these prompts](RELEASE_NOTE.md). Keep meaningful changes in version history. If you use an AI assistant, tell it which method body it may edit. Read its changes and decide the expected results yourself.
@@ -62,3 +62,7 @@ The candidate is a proposal for review. Its inclusion here is not approval to re
 The links and client labels in `fixtures.csv` are invented for this project. The destination hosts are reserved for examples. The helpers read redirect headers and never open those destinations. These records cannot show real traffic or visitor behaviour.
 
 Share your completed source, tests and release note through a public link that opens without a login. A short recording can show the local service. You do not need to put the service online.
+
+## Revisit a prerequisite
+
+[Prerequisite lessons and prepared help](PREREQUISITES.md) lists the exact lesson names and IDs used by this project. It also identifies which extra setup and checking steps the starter provides. Use it as a reference when you need one of those skills.

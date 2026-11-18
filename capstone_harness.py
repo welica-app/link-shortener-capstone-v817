@@ -44,6 +44,33 @@ class LocalService:
         finally:
             connection.close()
 
+    def raw_request(self, method, path, headers=(), body=b""):
+        """Send ordered header pairs and bytes without automatic length headers.
+
+        Use this for repeated headers, missing Content-Length or a deliberately
+        invalid length. Supply the complete header list you intend to test.
+        The connection adds Host, but does not add Content-Length or Content-Type.
+        Do not send fewer bytes than a valid positive Content-Length promises.
+        That would leave the local server waiting for the rest of the body.
+        """
+        if not isinstance(body, bytes):
+            raise TypeError("raw_request body must be bytes")
+        connection = HTTPConnection(
+            "127.0.0.1", self.server.server_port, timeout=10)
+        try:
+            connection.putrequest(method, path, skip_accept_encoding=True)
+            for name, value in headers:
+                connection.putheader(name, value)
+            connection.endheaders(body)
+            response = connection.getresponse()
+            return {
+                "status": response.status,
+                "headers": dict(response.getheaders()),
+                "body": response.read().decode("utf-8"),
+            }
+        finally:
+            connection.close()
+
     def __exit__(self, *error):
         try:
             self.server.shutdown()
