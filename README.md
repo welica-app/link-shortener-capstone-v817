@@ -37,12 +37,22 @@ Return to the terminal and press Control+C. The server stops and the terminal ac
 
 `demo.sqlite3` is a disposable database for this project. After the server stops, you can delete that file to start again with no saved links. Keep it when checking a restart. The automated helpers use separate temporary folders and never open `demo.sqlite3`.
 
-## Complete the service
+## Make the first two methods work
 
-1. Read [the request and method rules](CONTRACT.md). Then read [the storage explanation](STORAGE_GUIDE.md). Trace a request through `server.py` to `Store` before editing.
-2. Complete only the marked bodies in `store.py`. Keep `protected_storage.py` unchanged. The storage explanation shows what the prepared code owns and what you add.
-3. Run the starter tests. Then follow [the checking walkthrough](WALKTHROUGH.md). Add tests for the cases you choose from the contract.
-4. Compare the proposed statistics change in `review_candidate.py` with your completed version. Use expected and actual results to decide whether to include it. Keep both versions' evidence in your release note.
+After the baseline, open [Start with create and stats](STORAGE_GUIDE.md#start-with-create-and-stats). That section gives the method results, connection pattern and SQL bridge you need now. Complete those two bodies in `store.py`, then run:
+
+```text
+python3 -m unittest smoke_test.SmokeTests.test_create_and_stats -v
+```
+
+This check creates a link and reads its saved destination and initial count. It does not call `resolve`, so you can run it while that method is unfinished. Fix your two methods until it says `OK`.
+
+## Continue one stage at a time
+
+1. Read [Connect resolve next](STORAGE_GUIDE.md#connect-resolve-next). Complete that method. Then trace the three calls in `server.py` and run `python3 -m unittest smoke_test -v`.
+2. When choosing your own tests, read [the request rules](CONTRACT.md#routes) and [the client and limit rules](CONTRACT.md#client-and-request-limit). Use those rules to write expected results.
+3. Before the overlap and failure checks, read [the storage protection](STORAGE_GUIDE.md#before-the-overlap-and-failure-checks). Then follow [the checking walkthrough](WALKTHROUGH.md). Read the contract's failure-helper section alongside that example.
+4. Compare the proposed statistics change in `review_candidate.py` with your completed version. Keep both versions' results in your release note.
 5. Write the release note using [these prompts](RELEASE_NOTE.md). Keep meaningful changes in version history. If you use an AI assistant, tell it which method body it may edit. Read its changes and decide the expected results yourself.
 
 The candidate is a proposal for review. Its inclusion here is not approval to release it. You can compare it through `LocalService(CandidateStore(database))` in your own test. Import `CandidateStore` from `review_candidate`. Use a fresh temporary database for each version.

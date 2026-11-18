@@ -37,6 +37,15 @@ class SmokeTests(unittest.TestCase):
     def test_health(self):
         self.assertEqual(self.request("GET", "/health")[0], 200)
 
+    def test_create_and_stats(self):
+        """First working slice. This does not call the unfinished resolve method."""
+        link = {"code": "lesson", "destination": "https://example.org/guide/setup"}
+        status, _, _ = self.request("POST", "/links", link)
+        self.assertEqual(status, 201, "Complete Store.create first")
+        status, _, body = self.request("GET", "/stats/lesson")
+        self.assertEqual(status, 200, "Complete Store.stats next")
+        self.assertEqual(json.loads(body), {**link, "clicks": 0})
+
     def test_create_redirect_and_count(self):
         with Path(__file__).with_name("fixtures.csv").open(newline="") as source:
             link = next(csv.DictReader(source))
